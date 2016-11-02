@@ -23,6 +23,12 @@ int Gameplay::init () {
 	if (!font.loadFromFile ("resources/sansation.ttf"))
 		return EXIT_FAILURE;
 
+	// Load the texture of the ball
+	sf::Texture tex;
+	if (!tex.loadFromFile ("resources/ball.png"))
+		return EXIT_FAILURE;
+	pong.ball.setTexture (&tex);
+
 	// Initialize the pause message	
 	pauseMessage.setFont (font);
 	pauseMessage.setCharacterSize (40);

@@ -8,6 +8,7 @@ public:
 	float ballSpeed;
 	float ballAngle;
 	float ballAcceleration;	
+	
 
 	Ball () : ballRadius(10.f), ballSpeed(400.0f), ballAngle(0.0f), ballAcceleration(25.0f) {
 		// Create the ball
