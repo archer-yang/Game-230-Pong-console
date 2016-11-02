@@ -28,11 +28,10 @@ int Gameplay::init () {
 	pauseMessage.setCharacterSize (40);
 	pauseMessage.setPosition (170.f, 150.f);
 	pauseMessage.setFillColor (sf::Color::White);
-	pauseMessage.setString ("Welcome to SFML pong!\nPress space to start the game");
-		
+	pauseMessage.setString ("Welcome to SFML pong!\nPress space to start the game");		
+
 	while (window.isOpen ()) {
-		// Handle events
-		
+		// Handle events		
 		while (window.pollEvent (event)) {
 			// Window closed or escape key pressed: exit
 			if ((event.type == sf::Event::Closed) ||
@@ -114,30 +113,7 @@ int Gameplay::init () {
 				ballSound.play ();
 				pong.ballAngle = -pong.ballAngle;
 				pong.ball.setPosition (pong.ball.getPosition ().x, gameHeight - pong.ballRadius - 0.1f);
-			}		
-			
-			/*if (pong.ball.getPosition ().x - pong.ballRadius < leftPaddle.paddle.getPosition ().x + leftPaddle.paddleSize.x / 2) {
-				std::cout << "L1 ";
-				std::cout << pong.ball.getPosition ().x << std::endl;
-				std::cout << pong.ballRadius << std::endl;
-				std::cout << leftPaddle.paddle.getPosition ().x << std::endl;
-				std::cout << leftPaddle.paddleSize.x / 2 << std::endl;
-				if (pong.ball.getPosition ().x - pong.ballRadius > leftPaddle.paddle.getPosition ().x) {
-					std::cout << "L2 ";
-					if (pong.ball.getPosition ().y + pong.ballRadius >= leftPaddle.paddle.getPosition ().y - leftPaddle.paddleSize.y / 2) {
-						std::cout << "L3 ";
-						if (pong.ball.getPosition ().y - pong.ballRadius <= leftPaddle.paddle.getPosition ().y + leftPaddle.paddleSize.y / 2) {
-							std::cout << "L4" << std::endl;
-						}
-					}
-				}
-			}*/
-
-			//std::cout << leftPaddle.paddleSize.x << std::endl;
-			leftPaddle.paddleSize.x = 25;
-			leftPaddle.paddleSize.y = 100;
-			rightPaddle.paddleSize.x = 25;
-			rightPaddle.paddleSize.y = 100;
+			}
 
 			// Check the collisions between the ball and the paddles
 			// Left Paddle
@@ -145,6 +121,10 @@ int Gameplay::init () {
 				pong.ball.getPosition ().x - pong.ballRadius > leftPaddle.paddle.getPosition ().x &&
 				pong.ball.getPosition ().y + pong.ballRadius >= leftPaddle.paddle.getPosition ().y - leftPaddle.paddleSize.y / 2 &&
 				pong.ball.getPosition ().y - pong.ballRadius <= leftPaddle.paddle.getPosition ().y + leftPaddle.paddleSize.y / 2) {
+
+				pong.ballSpeed = (pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800);
+				std::cout << pong.ballSpeed << std::endl;
+
 				if (pong.ball.getPosition ().y > leftPaddle.paddle.getPosition ().y)
 					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
 				else
@@ -159,6 +139,10 @@ int Gameplay::init () {
 				pong.ball.getPosition ().x + pong.ballRadius < rightPaddle.paddle.getPosition ().x &&
 				pong.ball.getPosition ().y + pong.ballRadius >= rightPaddle.paddle.getPosition ().y - rightPaddle.paddleSize.y / 2 &&
 				pong.ball.getPosition ().y - pong.ballRadius <= rightPaddle.paddle.getPosition ().y + rightPaddle.paddleSize.y / 2) {
+
+				pong.ballSpeed = (pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800);
+				std::cout << pong.ballSpeed << std::endl;
+
 				if (pong.ball.getPosition ().y > rightPaddle.paddle.getPosition ().y)
 					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
 				else

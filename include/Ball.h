@@ -1,15 +1,16 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class Ball {	
+class Ball {
 public:
-	const float ballRadius = 10.f;
-	float ballSpeed = 400.f;
-	float ballAngle = 0.f; // to be changed later
 	sf::CircleShape ball;
+	const float ballRadius;
+	float ballSpeed;
+	float ballAngle;
+	float ballAcceleration;	
 
-	Ball () {
-		// Create the ball		
+	Ball () : ballRadius(10.f), ballSpeed(400.0f), ballAngle(0.0f), ballAcceleration(25.0f) {
+		// Create the ball
 		ball.setRadius (ballRadius - 3);
 		ball.setOutlineThickness (3);
 		ball.setOutlineColor (sf::Color::Black);

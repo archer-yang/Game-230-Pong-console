@@ -5,11 +5,10 @@ class Paddle {
 public:
 	sf::RectangleShape paddle;
 	sf::Vector2f paddleSize;
-	const float paddleSpeed = 400.f;
-	float rightPaddleSpeed = 0.f;
+	const float paddleSpeed;
+	float rightPaddleSpeed;
 
-	Paddle () {
-		sf::Vector2f paddleSize (25, 100);
+	Paddle () : paddleSize(25.0f, 100.0f), paddleSpeed(400.f), rightPaddleSpeed(0.f) {	
 		// Create the left paddle	
 		paddle.setSize (paddleSize - sf::Vector2f (3, 3));
 		paddle.setOutlineThickness (3);
