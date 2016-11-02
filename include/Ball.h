@@ -11,9 +11,7 @@ public:
 
 	Ball () : ballRadius(10.f), ballSpeed(400.0f), ballAngle(0.0f), ballAcceleration(25.0f) {
 		// Create the ball
-		ball.setRadius (ballRadius - 3);
-		ball.setOutlineThickness (3);
-		ball.setOutlineColor (sf::Color::Black);
+		ball.setRadius (ballRadius);
 		ball.setFillColor (sf::Color::White);
 		ball.setOrigin (ballRadius / 2, ballRadius / 2);
 	}

@@ -4,7 +4,7 @@
 #include <ctime>
 #include <cstdlib>
 #include "../include/Gameplay.h"
-#include <iostream>
+#include <sstream>
 
 int Gameplay::init () {	
 	std::srand (static_cast<unsigned int>(std::time (NULL)));
@@ -28,11 +28,31 @@ int Gameplay::init () {
 	pauseMessage.setCharacterSize (40);
 	pauseMessage.setPosition (170.f, 150.f);
 	pauseMessage.setFillColor (sf::Color::White);
-	pauseMessage.setString ("Welcome to SFML pong!\nPress space to start the game");		
+	pauseMessage.setString ("Welcome to SFML pong!\nPress space to start the game");
+
+	sf::RectangleShape middleLine;
+	middleLine.setFillColor (sf::Color::White);
+	middleLine.setOutlineColor (sf::Color::White);
+	middleLine.setOutlineThickness (1);
+	middleLine.setPosition (gameWidth / 2, 0);
+	middleLine.setSize (sf::Vector2f (0, gameHeight));
+
+	sf::Text won ("You won!\nPress space to restart or\nesc to exit.", font, 40);
+	won.setPosition (gameWidth / 2 - won.getGlobalBounds ().width / 2, gameHeight / 2 - won.getGlobalBounds ().height / 2);
+	won.setFillColor (sf::Color::White);
+
+	sf::Text lost ("You lost!\nPress space to restart or\nesc to exit.", font, 40);
+	lost.setPosition (gameWidth / 2 - lost.getGlobalBounds ().width / 2, gameHeight / 2 - lost.getGlobalBounds ().height / 2);
+	lost.setFillColor (sf::Color::White);
+
+	sf::Text score ("0   0", font, 50);
+	score.setPosition (gameWidth / 2 - score.getGlobalBounds ().width / 2, 40);
+	score.setFillColor (sf::Color (239, 187, 56));	
 
 	while (window.isOpen ()) {
-		// Handle events		
+		// Handle events
 		while (window.pollEvent (event)) {
+			
 			// Window closed or escape key pressed: exit
 			if ((event.type == sf::Event::Closed) ||
 				((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))) {
@@ -42,26 +62,21 @@ int Gameplay::init () {
 
 			// Space key pressed: play
 			if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) {
-				if (!isPlaying) {
-					// (re)start the game
-					isPlaying = true;
-					clock.restart ();
+				if (gameState != PLAYING) {
+					p1Score = 0;
+					p2Score = 0;
 
-					// Reset the position of the paddles and ball
-					leftPaddle.paddle.setPosition (10 + leftPaddle.paddleSize.x / 2, gameHeight / 2);
-					rightPaddle.paddle.setPosition (gameWidth - 10 - rightPaddle.paddleSize.x / 2, gameHeight / 2);
-					pong.ball.setPosition (gameWidth / 2, gameHeight / 2);
+					std::stringstream str;
+					str << p1Score << "   " << p2Score;
+					score.setString (str.str ());
+					score.setPosition (gameWidth / 2 - score.getGlobalBounds ().width / 2, 40);
 
-					// Reset the ball angle
-					do {
-						// Make sure the ball initial angle is not too much vertical
-						pong.ballAngle = (std::rand () % 360) * 2 * pi / 360;
-					} while (std::abs (std::cos (pong.ballAngle)) < 0.7f);
+					restart ();
 				}
 			}
 		}
 
-		if (isPlaying) {
+		if (gameState == PLAYING) {
 			float deltaTime = clock.restart ().asSeconds ();
 
 			// Move the player's paddle
@@ -97,12 +112,22 @@ int Gameplay::init () {
 
 			// Check collisions between the ball and the screen
 			if (pong.ball.getPosition ().x - pong.ballRadius < 0.f) {
-				isPlaying = false;
-				pauseMessage.setString ("You lost!\nPress space to restart or\nescape to exit");
+				p2Score++;
+				std::stringstream str;
+				str << p1Score << "   " << p2Score;
+				score.setString (str.str ());
+				score.setPosition (gameWidth / 2 - score.getGlobalBounds ().width / 2, 40);
+
+				restart ();
 			}
 			if (pong.ball.getPosition ().x + pong.ballRadius > gameWidth) {
-				isPlaying = false;
-				pauseMessage.setString ("You won!\nPress space to restart or\nescape to exit");
+				p1Score++;
+				std::stringstream str;
+				str << p1Score << "   " << p2Score;
+				score.setString (str.str ());
+				score.setPosition (gameWidth / 2 - score.getGlobalBounds ().width / 2, 40);
+
+				restart ();
 			}
 			if (pong.ball.getPosition ().y - pong.ballRadius < 0.f) {
 				ballSound.play ();
@@ -121,9 +146,8 @@ int Gameplay::init () {
 				pong.ball.getPosition ().x - pong.ballRadius > leftPaddle.paddle.getPosition ().x &&
 				pong.ball.getPosition ().y + pong.ballRadius >= leftPaddle.paddle.getPosition ().y - leftPaddle.paddleSize.y / 2 &&
 				pong.ball.getPosition ().y - pong.ballRadius <= leftPaddle.paddle.getPosition ().y + leftPaddle.paddleSize.y / 2) {
-
-				pong.ballSpeed = (pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800);
-				std::cout << pong.ballSpeed << std::endl;
+				//Accelerate the ball speed after each collision with the left paddle, increasing by 25 each time
+				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
 
 				if (pong.ball.getPosition ().y > leftPaddle.paddle.getPosition ().y)
 					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
@@ -139,9 +163,8 @@ int Gameplay::init () {
 				pong.ball.getPosition ().x + pong.ballRadius < rightPaddle.paddle.getPosition ().x &&
 				pong.ball.getPosition ().y + pong.ballRadius >= rightPaddle.paddle.getPosition ().y - rightPaddle.paddleSize.y / 2 &&
 				pong.ball.getPosition ().y - pong.ballRadius <= rightPaddle.paddle.getPosition ().y + rightPaddle.paddleSize.y / 2) {
-
-				pong.ballSpeed = (pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800);
-				std::cout << pong.ballSpeed << std::endl;
+				//Accelerate the ball speed after each collision with the right paddle, increasing by 25 each time
+				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
 
 				if (pong.ball.getPosition ().y > rightPaddle.paddle.getPosition ().y)
 					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
@@ -151,19 +174,36 @@ int Gameplay::init () {
 				ballSound.play ();
 				pong.ball.setPosition (rightPaddle.paddle.getPosition ().x - pong.ballRadius - rightPaddle.paddleSize.x / 2 - 0.1f, pong.ball.getPosition ().y);
 			}
+
+			// detect if game is over
+			if (p1Score >= 5 ) {
+				gameState = P1WON;
+			}				
+			if (p2Score >= 5) {
+				gameState = P1LOST;
+			}				
 		}
 
 		// Clear the window
-		window.clear (sf::Color (50, 200, 50));
+		window.clear (sf::Color (25, 147, 0));
 
-		if (isPlaying) {
-			// Draw the paddles and the ball
+		switch (gameState) {
+		case INTRO:
+			window.draw (pauseMessage);
+			break;
+		case PLAYING:
 			window.draw (leftPaddle.paddle);
 			window.draw (rightPaddle.paddle);
 			window.draw (pong.ball);
-		} else {
-			// Draw the pause message
-			window.draw (pauseMessage);
+			window.draw (middleLine);
+			window.draw (score);
+			break;
+		case P1WON:
+			window.draw (won);
+			break;
+		case P1LOST:
+			window.draw (lost);
+			break;
 		}
 
 		// Display things on screen
@@ -171,4 +211,21 @@ int Gameplay::init () {
 	}
 
 	return EXIT_SUCCESS;
+}
+
+void Gameplay::restart () {
+	gameState = PLAYING;
+	clock.restart ();
+
+	// Reset the position of the paddles and ball
+	leftPaddle.paddle.setPosition (10 + leftPaddle.paddleSize.x / 2, gameHeight / 2);
+	rightPaddle.paddle.setPosition (gameWidth - 10 - rightPaddle.paddleSize.x / 2, gameHeight / 2);
+	pong.ball.setPosition (gameWidth / 2, gameHeight / 2);
+	pong.ballSpeed = 400.f;
+
+	// Reset the ball angle
+	do {
+		// Make sure the ball initial angle is not too much vertical
+		pong.ballAngle = (std::rand () % 360) * 2 * pi / 360;
+	} while (std::abs (std::cos (pong.ballAngle)) < 0.7f);
 }

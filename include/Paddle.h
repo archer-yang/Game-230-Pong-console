@@ -11,9 +11,9 @@ public:
 	Paddle () : paddleSize(25.0f, 100.0f), paddleSpeed(400.f), rightPaddleSpeed(0.f) {	
 		// Create the left paddle	
 		paddle.setSize (paddleSize - sf::Vector2f (3, 3));
-		paddle.setOutlineThickness (3);
-		paddle.setOutlineColor (sf::Color::Black);
-		paddle.setFillColor (sf::Color (100, 100, 200));
+		paddle.setOutlineThickness (1);
+		paddle.setOutlineColor (sf::Color::White);
+		paddle.setFillColor (sf::Color (172, 172, 172));
 		paddle.setOrigin (paddleSize / 2.f);
 	}
 

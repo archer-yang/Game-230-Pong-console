@@ -21,8 +21,12 @@ public:
 	// Define the paddles properties
 	const sf::Time AITime = sf::seconds (0.1f);	
 	sf::Clock clock;
-	bool isPlaying = false;
 	sf::Event event;
 
+	unsigned int p1Score = 0, p2Score = 0;
+	enum states { INTRO, PLAYING, P1WON, P1LOST };
+	int gameState = INTRO;
+
 	int init ();
+	void restart ();
 };
