@@ -21,12 +21,24 @@
     <ClCompile Include="src\Gameplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Gameplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerUp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PowerUp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Paddle.h">

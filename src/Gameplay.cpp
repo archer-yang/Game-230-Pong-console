@@ -27,7 +27,8 @@ int Gameplay::init () {
 	sf::Texture tex;
 	if (!tex.loadFromFile ("resources/ball.png"))
 		return EXIT_FAILURE;
-	pong.ball.setTexture (&tex);
+	tex.setSmooth (true);
+	pong.ball.setTexture (&tex);	
 
 	// Initialize the pause message	
 	pauseMessage.setFont (font);
@@ -181,6 +182,72 @@ int Gameplay::init () {
 				pong.ball.setPosition (rightPaddle.paddle.getPosition ().x - pong.ballRadius - rightPaddle.paddleSize.x / 2 - 0.1f, pong.ball.getPosition ().y);
 			}
 
+			// Middle Left Paddle right edge collision
+			if (pong.ball.getPosition ().x - pong.ballRadius < midLeftPaddle.paddle.getPosition ().x + midLeftPaddle.paddleSize.x / 2 &&
+				pong.ball.getPosition ().x - pong.ballRadius > midLeftPaddle.paddle.getPosition ().x &&
+				pong.ball.getPosition ().y + pong.ballRadius >= midLeftPaddle.paddle.getPosition ().y - midLeftPaddle.paddleSize.y / 2 &&
+				pong.ball.getPosition ().y - pong.ballRadius <= midLeftPaddle.paddle.getPosition ().y + midLeftPaddle.paddleSize.y / 2) {
+				//Accelerate the ball speed after each collision with the left paddle, increasing by 25 each time
+				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
+
+				if (pong.ball.getPosition ().y > midLeftPaddle.paddle.getPosition ().y)
+					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
+				else
+					pong.ballAngle = pi - pong.ballAngle - (std::rand () % 20) * pi / 180;
+
+				ballSound.play ();
+				pong.ball.setPosition (midLeftPaddle.paddle.getPosition ().x + pong.ballRadius + midLeftPaddle.paddleSize.x / 2 + 0.1f, pong.ball.getPosition ().y);
+			}
+			// Middle Left Paddle left edge collision
+			if (pong.ball.getPosition ().x + pong.ballRadius > midLeftPaddle.paddle.getPosition ().x - midLeftPaddle.paddleSize.x / 2 &&
+				pong.ball.getPosition ().x + pong.ballRadius < midLeftPaddle.paddle.getPosition ().x &&
+				pong.ball.getPosition ().y + pong.ballRadius >= midLeftPaddle.paddle.getPosition ().y - midLeftPaddle.paddleSize.y / 2 &&
+				pong.ball.getPosition ().y - pong.ballRadius <= midLeftPaddle.paddle.getPosition ().y + midLeftPaddle.paddleSize.y / 2) {
+				//Accelerate the ball speed after each collision with the right paddle, increasing by 25 each time
+				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
+
+				if (pong.ball.getPosition ().y > midLeftPaddle.paddle.getPosition ().y)
+					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
+				else
+					pong.ballAngle = pi - pong.ballAngle - (std::rand () % 20) * pi / 180;
+
+				ballSound.play ();
+				pong.ball.setPosition (midLeftPaddle.paddle.getPosition ().x - pong.ballRadius - midLeftPaddle.paddleSize.x / 2 - 0.1f, pong.ball.getPosition ().y);
+			}
+
+			// Middle Right Paddle right edge collision
+			if (pong.ball.getPosition ().x - pong.ballRadius < midRightPaddle.paddle.getPosition ().x + midRightPaddle.paddleSize.x / 2 &&
+				pong.ball.getPosition ().x - pong.ballRadius > midRightPaddle.paddle.getPosition ().x &&
+				pong.ball.getPosition ().y + pong.ballRadius >= midRightPaddle.paddle.getPosition ().y - midRightPaddle.paddleSize.y / 2 &&
+				pong.ball.getPosition ().y - pong.ballRadius <= midRightPaddle.paddle.getPosition ().y + midRightPaddle.paddleSize.y / 2) {
+				//Accelerate the ball speed after each collision with the left paddle, increasing by 25 each time
+				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
+
+				if (pong.ball.getPosition ().y > midRightPaddle.paddle.getPosition ().y)
+					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
+				else
+					pong.ballAngle = pi - pong.ballAngle - (std::rand () % 20) * pi / 180;
+
+				ballSound.play ();
+				pong.ball.setPosition (midRightPaddle.paddle.getPosition ().x + pong.ballRadius + midRightPaddle.paddleSize.x / 2 + 0.1f, pong.ball.getPosition ().y);
+			}
+			// Middle Right Paddle left edge collision
+			if (pong.ball.getPosition ().x + pong.ballRadius > midRightPaddle.paddle.getPosition ().x - midRightPaddle.paddleSize.x / 2 &&
+				pong.ball.getPosition ().x + pong.ballRadius < midRightPaddle.paddle.getPosition ().x &&
+				pong.ball.getPosition ().y + pong.ballRadius >= midRightPaddle.paddle.getPosition ().y - midRightPaddle.paddleSize.y / 2 &&
+				pong.ball.getPosition ().y - pong.ballRadius <= midRightPaddle.paddle.getPosition ().y + midRightPaddle.paddleSize.y / 2) {
+				//Accelerate the ball speed after each collision with the right paddle, increasing by 25 each time
+				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
+
+				if (pong.ball.getPosition ().y > midRightPaddle.paddle.getPosition ().y)
+					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
+				else
+					pong.ballAngle = pi - pong.ballAngle - (std::rand () % 20) * pi / 180;
+
+				ballSound.play ();
+				pong.ball.setPosition (midRightPaddle.paddle.getPosition ().x - pong.ballRadius - midRightPaddle.paddleSize.x / 2 - 0.1f, pong.ball.getPosition ().y);
+			}
+
 			// detect if game is over
 			if (p1Score >= 5 ) {
 				gameState = P1WON;
@@ -200,6 +267,8 @@ int Gameplay::init () {
 		case PLAYING:
 			window.draw (leftPaddle.paddle);
 			window.draw (rightPaddle.paddle);
+			window.draw (midLeftPaddle.paddle);
+			window.draw (midRightPaddle.paddle);
 			window.draw (pong.ball);
 			window.draw (middleLine);
 			window.draw (score);
@@ -226,6 +295,9 @@ void Gameplay::restart () {
 	// Reset the position of the paddles and ball
 	leftPaddle.paddle.setPosition (10 + leftPaddle.paddleSize.x / 2, gameHeight / 2);
 	rightPaddle.paddle.setPosition (gameWidth - 10 - rightPaddle.paddleSize.x / 2, gameHeight / 2);
+	midLeftPaddle.paddle.setPosition (gameWidth / 2 - midLeftPaddle.paddleSize.x * 2, gameHeight / 2);
+	midRightPaddle.paddle.setPosition (gameWidth / 2 + midRightPaddle.paddleSize.x * 2, gameHeight / 2);
+
 	pong.ball.setPosition (gameWidth / 2, gameHeight / 2);
 	pong.ballSpeed = 400.f;
 

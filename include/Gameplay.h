@@ -13,6 +13,8 @@ public:
 	Ball pong;
 	Paddle leftPaddle;
 	Paddle rightPaddle;
+	Paddle midLeftPaddle;
+	Paddle midRightPaddle;
 
 	sf::Font font;
 	sf::Text pauseMessage;
