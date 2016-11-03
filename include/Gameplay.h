@@ -4,6 +4,7 @@
 #include "../include/Ball.h"
 #include "../include/Paddle.h"
 #include "../include/PowerUp.h"
+#include "../include/Collision.h"
 
 #define SIZE 8
 

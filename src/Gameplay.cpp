@@ -250,6 +250,18 @@ int Gameplay::init () {
 				pong.ball.setPosition (midRightPaddle.paddle.getPosition ().x - pong.ballRadius - midRightPaddle.paddleSize.x / 2 - 0.1f, pong.ball.getPosition ().y);
 			}
 
+			// Collision detect between pong and powerups
+			for (int i = 0; i < SIZE; i++) {
+				if (Collision::PixelPerfectTest (pong, powerups[i])) {
+					//Accelerate the ball speed after each collision with the right paddle, increasing by 25 each time
+					pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
+
+					std::cout << "Collision powerup" << i << std::endl;
+
+					ballSound.play ();					
+				}
+			}			
+
 			// detect if game is over
 			if (p1Score >= 5 ) {
 				gameState = P1WON;
@@ -313,10 +325,10 @@ void Gameplay::restart () {
 		offsetX[i] = std::rand () % (gameWidth / 2 - int (leftPaddle.paddleSize.x)) - int (midLeftPaddle.paddleSize.x);
 		std::srand (static_cast<unsigned int>(std::time (NULL)));
 		offsetY[i] = std::rand () % gameHeight;*/
-		offsetX[i] = offsetY[i] = 25 * (i + 1);
+		offsetX[i] = offsetY[i] = 50 * (i + 1);
 		powerups[i].ball.setPosition (float(gameWidth / 2 - offsetX[i]), float(offsetY[i]));
-		std::cout << "X: " << float (gameWidth / 2 - offsetX[i]) << std::endl;
-		std::cout << "Y: " << float (offsetY[i]) << std::endl;
+		/*std::cout << "X: " << float (gameWidth / 2 - offsetX[i]) << std::endl;
+		std::cout << "Y: " << float (offsetY[i]) << std::endl;*/
 	}
 
 	for (int i = SIZE / 2; i < SIZE; i++) {
@@ -324,10 +336,10 @@ void Gameplay::restart () {
 		offsetX[i] = std::rand () % (gameWidth / 2 - int (rightPaddle.paddleSize.x)) - int (midRightPaddle.paddleSize.x);
 		std::srand (static_cast<unsigned int>(std::time (NULL)));
 		offsetY[i] = std::rand () % gameHeight;*/
-		offsetX[i] = offsetY[i] =  25 * (i + 1);
+		offsetX[i] = offsetY[i] =  50 * (SIZE - i);
 		powerups[i].ball.setPosition (float(gameWidth / 2 + offsetX[i]), float(gameHeight - offsetY[i]));
-		std::cout << "X: " << float (gameWidth / 2 + offsetX[i]) << std::endl;
-		std::cout << "Y: " << float (offsetY[i]) << std::endl;
+		/*std::cout << "X: " << float (gameWidth / 2 + offsetX[i]) << std::endl;
+		std::cout << "Y: " << float (offsetY[i]) << std::endl;*/
 	}
 
 	powerups[0].ball.setFillColor (sf::Color::Red);
