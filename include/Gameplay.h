@@ -20,6 +20,7 @@ public:
 	Paddle midLeftPaddle;
 	Paddle midRightPaddle;
 	PowerUp powerups[SIZE];
+	sf::RectangleShape repulsor;
 
 	sf::Font font;
 	sf::Text pauseMessage;
@@ -33,6 +34,7 @@ public:
 	unsigned int p1Score = 0, p2Score = 0;
 	enum states { INTRO, PLAYING, P1WON, P1LOST };
 	int gameState = INTRO;
+	int isSlow = 0;
 
 	int init ();
 	void restart ();

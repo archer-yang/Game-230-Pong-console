@@ -32,6 +32,12 @@ int Gameplay::init () {
 	tex.setSmooth (true);
 	pong.ball.setTexture (&tex);	
 
+	sf::Vector2f repSize = sf::Vector2f (midLeftPaddle.paddleSize.x * 3, midLeftPaddle.paddleSize.y);
+	repulsor.setSize (repSize);
+	repulsor.setPosition (gameWidth / 2, gameHeight / 2);
+	repulsor.setFillColor (sf::Color(188, 147, 145));
+	repulsor.setOrigin (repSize / 2.f);
+
 	// Initialize the pause message	
 	pauseMessage.setFont (font);
 	pauseMessage.setCharacterSize (40);
@@ -189,8 +195,6 @@ int Gameplay::init () {
 				pong.ball.getPosition ().x - pong.ballRadius > midLeftPaddle.paddle.getPosition ().x &&
 				pong.ball.getPosition ().y + pong.ballRadius >= midLeftPaddle.paddle.getPosition ().y - midLeftPaddle.paddleSize.y / 2 &&
 				pong.ball.getPosition ().y - pong.ballRadius <= midLeftPaddle.paddle.getPosition ().y + midLeftPaddle.paddleSize.y / 2) {
-				//Accelerate the ball speed after each collision with the left paddle, increasing by 25 each time
-				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
 
 				if (pong.ball.getPosition ().y > midLeftPaddle.paddle.getPosition ().y)
 					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
@@ -205,8 +209,6 @@ int Gameplay::init () {
 				pong.ball.getPosition ().x + pong.ballRadius < midLeftPaddle.paddle.getPosition ().x &&
 				pong.ball.getPosition ().y + pong.ballRadius >= midLeftPaddle.paddle.getPosition ().y - midLeftPaddle.paddleSize.y / 2 &&
 				pong.ball.getPosition ().y - pong.ballRadius <= midLeftPaddle.paddle.getPosition ().y + midLeftPaddle.paddleSize.y / 2) {
-				//Accelerate the ball speed after each collision with the right paddle, increasing by 25 each time
-				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
 
 				if (pong.ball.getPosition ().y > midLeftPaddle.paddle.getPosition ().y)
 					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
@@ -222,8 +224,6 @@ int Gameplay::init () {
 				pong.ball.getPosition ().x - pong.ballRadius > midRightPaddle.paddle.getPosition ().x &&
 				pong.ball.getPosition ().y + pong.ballRadius >= midRightPaddle.paddle.getPosition ().y - midRightPaddle.paddleSize.y / 2 &&
 				pong.ball.getPosition ().y - pong.ballRadius <= midRightPaddle.paddle.getPosition ().y + midRightPaddle.paddleSize.y / 2) {
-				//Accelerate the ball speed after each collision with the left paddle, increasing by 25 each time
-				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
 
 				if (pong.ball.getPosition ().y > midRightPaddle.paddle.getPosition ().y)
 					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
@@ -238,8 +238,6 @@ int Gameplay::init () {
 				pong.ball.getPosition ().x + pong.ballRadius < midRightPaddle.paddle.getPosition ().x &&
 				pong.ball.getPosition ().y + pong.ballRadius >= midRightPaddle.paddle.getPosition ().y - midRightPaddle.paddleSize.y / 2 &&
 				pong.ball.getPosition ().y - pong.ballRadius <= midRightPaddle.paddle.getPosition ().y + midRightPaddle.paddleSize.y / 2) {
-				//Accelerate the ball speed after each collision with the right paddle, increasing by 25 each time
-				pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
 
 				if (pong.ball.getPosition ().y > midRightPaddle.paddle.getPosition ().y)
 					pong.ballAngle = pi - pong.ballAngle + (std::rand () % 20) * pi / 180;
@@ -249,18 +247,37 @@ int Gameplay::init () {
 				ballSound.play ();
 				pong.ball.setPosition (midRightPaddle.paddle.getPosition ().x - pong.ballRadius - midRightPaddle.paddleSize.x / 2 - 0.1f, pong.ball.getPosition ().y);
 			}
+						
+			//std::cout << pong.ballSpeed << std::endl;
+			//speed down
+			if (pong.ball.getPosition().x - pong.ballRadius > gameWidth / 2 - midLeftPaddle.paddleSize.x &&
+				pong.ball.getPosition ().x + pong.ballRadius < gameWidth / 2 + midRightPaddle.paddleSize.x &&
+				pong.ball.getPosition().y - pong.ballRadius > gameHeight / 2 - midLeftPaddle.paddleSize.y / 2 &&
+				pong.ball.getPosition ().y + pong.ballRadius < gameHeight / 2 + midLeftPaddle.paddleSize.y / 2 &&
+				isSlow == 0) {
+				//Slow down the ball speed after entering the center, decreased by 25 each time
+				pong.ballSpeed -= pong.ballAcceleration;
+				//std::cout << "Slowed down speed" << pong.ballSpeed << std::endl;
+				isSlow = 1;
+			}
+
+			if (pong.ball.getPosition ().x - pong.ballRadius < gameWidth / 2 - midLeftPaddle.paddleSize.x * 2 ||
+				pong.ball.getPosition ().x + pong.ballRadius > gameWidth / 2 + midRightPaddle.paddleSize.x * 2 ||
+				pong.ball.getPosition ().y - pong.ballRadius < gameHeight / 2 - midLeftPaddle.paddleSize.y / 2 ||
+				pong.ball.getPosition ().y + pong.ballRadius > gameHeight / 2 + midLeftPaddle.paddleSize.y / 2) {
+				isSlow = 0;
+			}
 
 			// Collision detect between pong and powerups
-			for (int i = 0; i < SIZE; i++) {
-				if (Collision::PixelPerfectTest (pong, powerups[i])) {
-					//Accelerate the ball speed after each collision with the right paddle, increasing by 25 each time
-					pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
+			//for (int i = 0; i < SIZE; i++) {
+			//	if (Collision::CircleTest (pong, powerups[i])) {
+			//		//Accelerate the ball speed after each collision with the right paddle, increasing by 25 each time
+			//		pong.ballSpeed = pong.ballSpeed < 800 ? pong.ballSpeed + pong.ballAcceleration : 800;
 
-					std::cout << "Collision powerup" << i << std::endl;
-
-					ballSound.play ();					
-				}
-			}			
+			//		//std::cout << "Collision powerup" << i << std::endl;
+			//		break;
+			//	}
+			//}
 
 			// detect if game is over
 			if (p1Score >= 5 ) {
@@ -282,10 +299,11 @@ int Gameplay::init () {
 			window.draw (leftPaddle.paddle);
 			window.draw (rightPaddle.paddle);
 			window.draw (midLeftPaddle.paddle);
-			window.draw (midRightPaddle.paddle);
-			window.draw (pong.ball);
+			window.draw (midRightPaddle.paddle);			
 			window.draw (middleLine);
 			window.draw (score);
+			window.draw (repulsor);
+			window.draw (pong.ball);
 			for (auto powerup : powerups)
 				window.draw (powerup.ball);						
 			break;
@@ -325,7 +343,7 @@ void Gameplay::restart () {
 		offsetX[i] = std::rand () % (gameWidth / 2 - int (leftPaddle.paddleSize.x)) - int (midLeftPaddle.paddleSize.x);
 		std::srand (static_cast<unsigned int>(std::time (NULL)));
 		offsetY[i] = std::rand () % gameHeight;*/
-		offsetX[i] = offsetY[i] = 50 * (i + 1);
+		offsetX[i] = offsetY[i] = 75 * (i + 1);
 		powerups[i].ball.setPosition (float(gameWidth / 2 - offsetX[i]), float(offsetY[i]));
 		/*std::cout << "X: " << float (gameWidth / 2 - offsetX[i]) << std::endl;
 		std::cout << "Y: " << float (offsetY[i]) << std::endl;*/
@@ -336,7 +354,7 @@ void Gameplay::restart () {
 		offsetX[i] = std::rand () % (gameWidth / 2 - int (rightPaddle.paddleSize.x)) - int (midRightPaddle.paddleSize.x);
 		std::srand (static_cast<unsigned int>(std::time (NULL)));
 		offsetY[i] = std::rand () % gameHeight;*/
-		offsetX[i] = offsetY[i] =  50 * (SIZE - i);
+		offsetX[i] = offsetY[i] =  75 * (SIZE - i);
 		powerups[i].ball.setPosition (float(gameWidth / 2 + offsetX[i]), float(gameHeight - offsetY[i]));
 		/*std::cout << "X: " << float (gameWidth / 2 + offsetX[i]) << std::endl;
 		std::cout << "Y: " << float (offsetY[i]) << std::endl;*/
