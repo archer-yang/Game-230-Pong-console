@@ -4,7 +4,9 @@
 #include <ctime>
 #include <cstdlib>
 #include "../include/Gameplay.h"
+#include "../include/Collision.h"
 #include <sstream>
+#include <iostream>
 
 int Gameplay::init () {	
 	std::srand (static_cast<unsigned int>(std::time (NULL)));
@@ -19,7 +21,7 @@ int Gameplay::init () {
 		return EXIT_FAILURE;
 	sf::Sound ballSound (ballSoundBuffer);
 
-	// Load the text font	
+	// Load the text font
 	if (!font.loadFromFile ("resources/sansation.ttf"))
 		return EXIT_FAILURE;
 
@@ -54,7 +56,7 @@ int Gameplay::init () {
 
 	sf::Text score ("0   0", font, 50);
 	score.setPosition (gameWidth / 2 - score.getGlobalBounds ().width / 2, 40);
-	score.setFillColor (sf::Color (239, 187, 56));	
+	score.setFillColor (sf::Color (239, 187, 56));
 
 	while (window.isOpen ()) {
 		// Handle events
@@ -272,6 +274,8 @@ int Gameplay::init () {
 			window.draw (pong.ball);
 			window.draw (middleLine);
 			window.draw (score);
+			for (auto powerup : powerups)
+				window.draw (powerup.ball);						
 			break;
 		case P1WON:
 			window.draw (won);
@@ -301,6 +305,40 @@ void Gameplay::restart () {
 	pong.ball.setPosition (gameWidth / 2, gameHeight / 2);
 	pong.ballSpeed = 400.f;
 
+	// Reset powerups
+	int offsetX[SIZE];
+	int offsetY[SIZE];
+	for (int i = 0; i < SIZE / 2; i++) {
+		/*std::srand (static_cast<unsigned int>(std::time (NULL)));
+		offsetX[i] = std::rand () % (gameWidth / 2 - int (leftPaddle.paddleSize.x)) - int (midLeftPaddle.paddleSize.x);
+		std::srand (static_cast<unsigned int>(std::time (NULL)));
+		offsetY[i] = std::rand () % gameHeight;*/
+		offsetX[i] = offsetY[i] = 25 * (i + 1);
+		powerups[i].ball.setPosition (float(gameWidth / 2 - offsetX[i]), float(offsetY[i]));
+		std::cout << "X: " << float (gameWidth / 2 - offsetX[i]) << std::endl;
+		std::cout << "Y: " << float (offsetY[i]) << std::endl;
+	}
+
+	for (int i = SIZE / 2; i < SIZE; i++) {
+		/*std::srand (static_cast<unsigned int>(std::time (NULL)));
+		offsetX[i] = std::rand () % (gameWidth / 2 - int (rightPaddle.paddleSize.x)) - int (midRightPaddle.paddleSize.x);
+		std::srand (static_cast<unsigned int>(std::time (NULL)));
+		offsetY[i] = std::rand () % gameHeight;*/
+		offsetX[i] = offsetY[i] =  25 * (i + 1);
+		powerups[i].ball.setPosition (float(gameWidth / 2 + offsetX[i]), float(gameHeight - offsetY[i]));
+		std::cout << "X: " << float (gameWidth / 2 + offsetX[i]) << std::endl;
+		std::cout << "Y: " << float (offsetY[i]) << std::endl;
+	}
+
+	powerups[0].ball.setFillColor (sf::Color::Red);
+	powerups[1].ball.setFillColor (sf::Color::Black);
+	powerups[2].ball.setFillColor (sf::Color::Magenta);
+	powerups[3].ball.setFillColor (sf::Color::Yellow);
+	powerups[4].ball.setFillColor (sf::Color::Cyan);
+	powerups[5].ball.setFillColor (sf::Color::Red);
+	powerups[6].ball.setFillColor (sf::Color::Magenta);
+	powerups[7].ball.setFillColor (sf::Color::Blue);
+	
 	// Reset the ball angle
 	do {
 		// Make sure the ball initial angle is not too much vertical

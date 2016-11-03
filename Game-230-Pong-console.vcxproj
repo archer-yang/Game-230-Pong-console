@@ -162,7 +162,6 @@
     <ClInclude Include="include\Gameplay.h" />
     <ClInclude Include="include\Paddle.h" />
     <ClInclude Include="include\PowerUp.h" />
-    <ClInclude Include="PowerUp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

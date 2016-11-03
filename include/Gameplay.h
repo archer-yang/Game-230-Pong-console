@@ -3,6 +3,9 @@
 #include <ctime>
 #include "../include/Ball.h"
 #include "../include/Paddle.h"
+#include "../include/PowerUp.h"
+
+#define SIZE 8
 
 class Gameplay {
 private:
@@ -15,6 +18,7 @@ public:
 	Paddle rightPaddle;
 	Paddle midLeftPaddle;
 	Paddle midRightPaddle;
+	PowerUp powerups[SIZE];
 
 	sf::Font font;
 	sf::Text pauseMessage;

@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class Ball {
+class Ball : public sf::Sprite {
 public:
 	sf::CircleShape ball;
 	const float ballRadius;

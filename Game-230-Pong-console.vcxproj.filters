@@ -32,9 +32,6 @@
     <ClInclude Include="include\Gameplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PowerUp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\PowerUp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
