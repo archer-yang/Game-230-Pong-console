@@ -255,8 +255,8 @@ int Gameplay::init () {
 				pong.ball.getPosition().y - pong.ballRadius > gameHeight / 2 - midLeftPaddle.paddleSize.y / 2 &&
 				pong.ball.getPosition ().y + pong.ballRadius < gameHeight / 2 + midLeftPaddle.paddleSize.y / 2 &&
 				isSlow == 0) {
-				//Slow down the ball speed after entering the center, decreased by 25 each time
-				pong.ballSpeed -= pong.ballAcceleration;
+				//Slow down the ball speed after entering the center, decreased by 75 each time
+				pong.ballSpeed -= pong.ballAcceleration * 3;
 				//std::cout << "Slowed down speed" << pong.ballSpeed << std::endl;
 				isSlow = 1;
 			}
@@ -338,23 +338,21 @@ void Gameplay::restart () {
 	// Reset powerups
 	int offsetX[SIZE];
 	int offsetY[SIZE];
-	for (int i = 0; i < SIZE / 2; i++) {
-		/*std::srand (static_cast<unsigned int>(std::time (NULL)));
+	for (int i = 0; i < SIZE / 2; i++) {		
 		offsetX[i] = std::rand () % (gameWidth / 2 - int (leftPaddle.paddleSize.x)) - int (midLeftPaddle.paddleSize.x);
 		std::srand (static_cast<unsigned int>(std::time (NULL)));
-		offsetY[i] = std::rand () % gameHeight;*/
-		offsetX[i] = offsetY[i] = 75 * (i + 1);
+		offsetY[i] = std::rand () % gameHeight;
+		//offsetX[i] = offsetY[i] = 75 * (i + 1);
 		powerups[i].ball.setPosition (float(gameWidth / 2 - offsetX[i]), float(offsetY[i]));
 		/*std::cout << "X: " << float (gameWidth / 2 - offsetX[i]) << std::endl;
 		std::cout << "Y: " << float (offsetY[i]) << std::endl;*/
 	}
 
-	for (int i = SIZE / 2; i < SIZE; i++) {
-		/*std::srand (static_cast<unsigned int>(std::time (NULL)));
+	for (int i = SIZE / 2; i < SIZE; i++) {		
 		offsetX[i] = std::rand () % (gameWidth / 2 - int (rightPaddle.paddleSize.x)) - int (midRightPaddle.paddleSize.x);
 		std::srand (static_cast<unsigned int>(std::time (NULL)));
-		offsetY[i] = std::rand () % gameHeight;*/
-		offsetX[i] = offsetY[i] =  75 * (SIZE - i);
+		offsetY[i] = std::rand () % gameHeight;
+		//offsetX[i] = offsetY[i] =  75 * (SIZE - i);
 		powerups[i].ball.setPosition (float(gameWidth / 2 + offsetX[i]), float(gameHeight - offsetY[i]));
 		/*std::cout << "X: " << float (gameWidth / 2 + offsetX[i]) << std::endl;
 		std::cout << "Y: " << float (offsetY[i]) << std::endl;*/
